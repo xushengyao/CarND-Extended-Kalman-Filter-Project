@@ -70,10 +70,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   float eq2 = atan2(py,px);
   float eq3 = (px*vx+py*vy)/eq1;
 
-  VectorXd H_func(3);
-  H_func << eq1, eq2, eq3;
+  VectorXd z_pred(3);
+  z_pred << eq1, eq2, eq3;
 
-  VectorXd y = z - H_func;
+  VectorXd y = z - z_pred;
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
