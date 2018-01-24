@@ -63,9 +63,24 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   } else {
     rho_dot = (x_(0)*x_(2) + x_(1)*x_(3))/rho;
   }
+
   VectorXd z_pred(3);
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
+
+  bool in_range = false;
+  while (in_range == false){
+   if (y(1) > 3.14159){
+     y(1) = y(1) - 6.2831;
+   }
+   else if (y(1) < -3.14159){
+     y(1) = y(1) + 6.2831;
+   }
+   else{
+     in_range = true;
+   }
+  }
+
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();
