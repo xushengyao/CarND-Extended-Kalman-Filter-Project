@@ -36,8 +36,8 @@ void KalmanFilter::Update(const VectorXd &z) {
   */
   VectorXd z_pred = H_ * x_;
   VectorXd y = z - z_pred;
-  MatrixXd S_ = H_ * P_ * H_.transpose() + R_;
-  MatrixXd K_ = P_ * H_.transpose() * S_.inverse();
+  MatrixXd S = H_ * P_ * H_.transpose() + R_;
+  MatrixXd K = P_ * H_.transpose() * S.inverse();
 
   //new estimate
   x_ = x_ + (K * y);
