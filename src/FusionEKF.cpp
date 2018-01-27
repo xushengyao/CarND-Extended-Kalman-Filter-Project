@@ -120,30 +120,51 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
    */
    //compute the time elapsed between the current and previous measurements
-  float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
-  previous_timestamp_ = measurement_pack.timestamp_;
+//   float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
+//   previous_timestamp_ = measurement_pack.timestamp_;
+//
+//   //float dt_2 = dt   * dt;
+// //  float dt_3 = dt_2 * dt;
+//   //float dt_4 = dt_3 * dt;
+//
+//   //Modify the F matrix so that the time is integrated
+//   ekf_.F_(0, 2) = dt;
+//   ekf_.F_(1, 3) = dt;
+//
+//   float noise_ax = 9;
+//   float noise_ay = 9;
+//   //set the process covariance matrix Q
+//   ekf_.Q_ = MatrixXd(4, 4);
+//   // ekf_.Q_ << dt_4 / 4 * noise_ax, 0, dt_3 / 2 * noise_ax, 0,
+//              // 0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
+//              // dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
+//              // 0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
+//   ekf_.Q_ << pow(dt,4) * noise_ax / 4, 0, pow(dt,3) * noise_ax / 2, 0,
+//              0, pow(dt,4) * noise_ay / 4, 0, pow(dt,3) * noise_ay / 2,
+//              pow(dt,3) * noise_ax / 2, 0, pow(dt,2) * noise_ax, 0,
+//              0, pow(dt,3) * noise_ay / 2, 0, pow(dt,2) * noise_ay;
+float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;	//dt - expressed in seconds
+previous_timestamp_ = measurement_pack.timestamp_;
 
-  //float dt_2 = dt   * dt;
-//  float dt_3 = dt_2 * dt;
-  //float dt_4 = dt_3 * dt;
+float dt_2 = dt   * dt;
+float dt_3 = dt_2 * dt;
+float dt_4 = dt_3 * dt;
 
-  //Modify the F matrix so that the time is integrated
-  ekf_.F_(0, 2) = dt;
-  ekf_.F_(1, 3) = dt;
+//Modify the F matrix so that the time is integrated
+ekf_.F_(0, 2) = dt;
+ekf_.F_(1, 3) = dt;
 
-  float noise_ax = 9;
-  float noise_ay = 9;
-  //set the process covariance matrix Q
-  ekf_.Q_ = MatrixXd(4, 4);
-  // ekf_.Q_ << dt_4 / 4 * noise_ax, 0, dt_3 / 2 * noise_ax, 0,
-             // 0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
-             // dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
-             // 0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
-  ekf_.Q_ << pow(dt,4) * noise_ax / 4, 0, pow(dt,3) * noise_ax / 2, 0,
-             0, pow(dt,4) * noise_ay / 4, 0, pow(dt,3) * noise_ay / 2,
-             pow(dt,3) * noise_ax / 2, 0, pow(dt,2) * noise_ax, 0,
-             0, pow(dt,3) * noise_ay / 2, 0, pow(dt,2) * noise_ay;
+//set the acceleration noise components
+float noise_ax = 9;
+float noise_ay = 9;
 
+//set the process covariance matrix Q
+ekf_.Q_ = MatrixXd(4, 4);
+ekf_.Q_ << dt_4 / 4 * noise_ax, 0, dt_3 / 2 * noise_ax, 0,
+           0, dt_4 / 4 * noise_ay, 0, dt_3 / 2 * noise_ay,
+           dt_3 / 2 * noise_ax, 0, dt_2*noise_ax, 0,
+           0, dt_3 / 2 * noise_ay, 0, dt_2*noise_ay;
+           
   ekf_.Predict();
 
   /*****************************************************************************
