@@ -1,5 +1,5 @@
 #include "kalman_filter.h"
-
+#include <cmath>
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -73,6 +73,7 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   z_pred << rho, phi, rho_dot;
   VectorXd y = z - z_pred;
 
+  //Normalization
   while(y[1] > M_PI){
     y[1] -= 2 * M_PI;
   }
